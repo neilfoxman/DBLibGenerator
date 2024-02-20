@@ -51,80 +51,172 @@ class Yageo_RC_L:
             if series is not series_list[-1]:
                 ret_str += ', '
         return ret_str
+
+    def gen_component_dict(
+        resistance,
+        value_series_str,
+        tolerance,
+        size,
+        power_rating,
+        packaging,
+        reel_power
+    ):
+        """
+        Generate component object that represents a specific resistor by this manufacturer
+        """
+        resistance_str = Yageo_RC_L.gen_resistance_str(resistance)
+        if resistance == 0:
+            description = f"{resistance_str} Jumper, {size}, {power_rating}"
+        else:
+            description = f"{resistance_str} Resistor, {tolerance}, {size}, {power_rating}"
+
+        return component.ChipComponent(
+            value=resistance_str,
+            series=value_series_str,
+            tolerance=tolerance,
+            size=size,
+            power_rating=power_rating,
+            description=description,
+            comment='=Value',
+            manufacturer='Yageo',
+            manufacturer_pn=Yageo_RC_L.gen_pn(
+                size=size,
+                tolerance=tolerance,
+                packaging=packaging,
+                reel_power=reel_power,
+                resistance=resistance,
+            ),
+            symbol_path=common.SYMBOL_PATH,
+            symbol_ref='Resistor',
+            footprint_path=common.FOOTPRINT_PATH,
+            footprint_ref=size,
+        ).to_dict()
+
+    def gen_component_dicts_in_range(
+        min_value,
+        max_value,
+        accepted_series_list,
+        tolerance,
+        size,
+        power_rating,
+        packaging,
+        reel_power
+    ):
+        # Generate list of possible values from max and min
+        values_map = values.ValueSeries.gen_values_map_in_range(
+            min_value=min_value,
+            max_value=max_value,
+            accepted_series_list=accepted_series_list
+        )
+
+        # Generate component for each value
+        component_list = []
+        for value, series_list in values_map.items():
+            component_list.append(
+                Yageo_RC_L.gen_component_dict(
+                    resistance=value,
+                    value_series_str=Yageo_RC_L.gen_series_str(series_list),
+                    tolerance=tolerance,
+                    size=size,
+                    power_rating=power_rating,
+                    packaging=packaging,
+                    reel_power=reel_power
+                )
+            )
+        return component_list
+
+        
                 
 
-    def gen_components():
-        component_list = []
-
-        # Using some common parameters across all components for now
+    def gen_all_components():
+        # Some common parameters to use for generating all resistors
         packaging = 'Paper taping reel'
         reel_power = '7 inch dia. Reel & Standard power'
 
-        # Size we are generating for
-        size = '0805'
+        # Generate all components
+        component_list = []
 
-        # Add jumper to list first (not in series maps)
-        resistance = 0
+        # 0603
         component_list.append(
-            component.ChipComponent(
-                value=Yageo_RC_L.gen_resistance_str(resistance),
-                series='Jumper',
-                tolerance='Jumper',
-                size=size,
-                power_rating='Jumper',
-                description=f'{Yageo_RC_L.gen_resistance_str(resistance)} Jumper, {size}',
-                comment='=Value',
-                manufacturer='Yageo',
-                manufacturer_pn=Yageo_RC_L.gen_pn(
-                    size=size,
-                    tolerance='5.0%', # Used for jumpers according to datasheet
-                    packaging=packaging,
-                    reel_power=reel_power,
-                    resistance=0,
-                ),
-                symbol_path=common.SYMBOL_PATH,
-                symbol_ref='Resistor',
-                footprint_path=common.FOOTPRINT_PATH,
-                footprint_ref=size,
-            ).to_dict()
+            Yageo_RC_L.gen_component_dict(
+                resistance=0,
+                value_series_str='Jumper',
+                tolerance='5.0%',
+                size='0603',
+                power_rating='1A Rated, 2A Max',
+                packaging=packaging,
+                reel_power=reel_power
+            )
+        )
+        component_list += Yageo_RC_L.gen_component_dicts_in_range(
+            min_value=1,
+            max_value=10e6,
+            accepted_series_list=[values.E24, values.E96],
+            tolerance='1.0%',
+            size='0603',
+            power_rating='1/10W',
+            packaging=packaging,
+            reel_power=reel_power
         )
 
-        # Now generate all resistors
-        power_rating = '1/8W'
-        values_map = values.ValueSeries.gen_values_map_in_range(min_value=1, max_value=10, accepted_series_list=[values.E24, values.E96])
-        tolerances = ['1.0%']
-        for tolerance in tolerances:
-            for value, series_list in values_map.items():
-                component_list.append(
-                    component.ChipComponent(
-                        value=Yageo_RC_L.gen_resistance_str(value),
-                        series=Yageo_RC_L.gen_series_str(series_list),
-                        tolerance=tolerance,
-                        size=size,
-                        power_rating=power_rating,
-                        description=f'{Yageo_RC_L.gen_resistance_str(value)} {tolerance} Resistor, {size}, {power_rating}',
-                        comment='=Value',
-                        manufacturer='Yageo',
-                        manufacturer_pn=Yageo_RC_L.gen_pn(
-                            size=size,
-                            tolerance=tolerance,
-                            packaging=packaging,
-                            reel_power=reel_power,
-                            resistance=value,
-                        ),
-                        symbol_path=common.SYMBOL_PATH,
-                        symbol_ref='Resistor',
-                        footprint_path=common.FOOTPRINT_PATH,
-                        footprint_ref=size,
-                    ).to_dict()
-                )
 
+        # 0805
+        component_list.append(
+            Yageo_RC_L.gen_component_dict(
+                resistance=0,
+                value_series_str='Jumper',
+                tolerance='5.0%',
+                size='0805',
+                power_rating='2A Rated, 5A Max',
+                packaging=packaging,
+                reel_power=reel_power
+            )
+        )
+        component_list += Yageo_RC_L.gen_component_dicts_in_range(
+            min_value=1,
+            max_value=10e6,
+            accepted_series_list=[values.E24, values.E96],
+            tolerance='1.0%',
+            size='0805',
+            power_rating='1/8W',
+            packaging=packaging,
+            reel_power=reel_power
+        )
+
+        # 1206
+        component_list.append(
+            Yageo_RC_L.gen_component_dict(
+                resistance=0,
+                value_series_str='Jumper',
+                tolerance='5.0%',
+                size='1206',
+                power_rating='2A Rated, 10A Max',
+                packaging=packaging,
+                reel_power=reel_power
+            )
+        )
+        component_list += Yageo_RC_L.gen_component_dicts_in_range(
+            min_value=1,
+            max_value=10e6,
+            accepted_series_list=[values.E24, values.E96],
+            tolerance='1.0%',
+            size='1206',
+            power_rating='1/4W',
+            packaging=packaging,
+            reel_power=reel_power
+        )
 
         return component_list
-    
 
-comps = Yageo_RC_L.gen_components()
+print("Generating components...")
+comps = Yageo_RC_L.gen_all_components()
+
+print("Restructuring as DataFrame...")
 import pandas as pd
 df = pd.DataFrame(comps)#.set_index('Manufacturer Part Number')
 print(df)
+
+print("Pushing to Excel document...")
 df.to_excel('yageo_RC_L.xlsx')
+
+print("Done!")
