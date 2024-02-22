@@ -50,8 +50,9 @@ class ValueSeries:
             for significand3, series_list in merged_series_map.items():
                 # If we are on the lowest or highest possible exponent, compare min and max significands too
                 # If looking at an exponent between max and min exponent, then it automatically qualifies as a valid value
-                if (exponent == min_expononent and significand3 >= min_significand3) or \
-                (exponent == max_expononent and significand3 <= max_significand3) or \
+                if (exponent == min_expononent and significand3 >= min_significand3 and min_expononent < max_expononent) or \
+                (exponent == max_expononent and significand3 <= max_significand3 and min_expononent < max_expononent) or \
+                (exponent == min_expononent and exponent == max_expononent and significand3 >= min_significand3 and significand3 <= max_significand3) or \
                 (exponent > min_expononent and exponent < max_expononent):
                     ret_map[significand3/100.0 * pow(10,exponent)] = series_list
         return dict(sorted(ret_map.items()))
