@@ -52,6 +52,7 @@ def gen_component_dict(
     value_series_str,
     tolerance,
     size,
+    rated_voltage,
     power_rating,
     packaging,
     reel_power
@@ -70,6 +71,7 @@ def gen_component_dict(
         series=value_series_str,
         tolerance=tolerance,
         size=size,
+        rated_voltage=rated_voltage,
         power_rating=power_rating,
         description=description,
         comment='=Value',
@@ -94,6 +96,7 @@ def gen_component_dicts_in_range(
     accepted_series_list,
     tolerance,
     size,
+    rated_voltage,
     power_rating,
     packaging,
     reel_power
@@ -114,6 +117,7 @@ def gen_component_dicts_in_range(
                 value_series_str=values.gen_series_str(series_list),
                 tolerance=tolerance,
                 size=size,
+                rated_voltage=rated_voltage,
                 power_rating=power_rating,
                 packaging=packaging,
                 reel_power=reel_power
@@ -139,6 +143,7 @@ def gen_all_components():
             value_series_str='Jumper',
             tolerance='5.0%',
             size='0603',
+            rated_voltage='75V',
             power_rating='1A Rated, 2A Max',
             packaging=packaging,
             reel_power=reel_power
@@ -150,6 +155,7 @@ def gen_all_components():
         accepted_series_list=[values.E24, values.E96],
         tolerance='1.0%',
         size='0603',
+        rated_voltage='75V',
         power_rating='1/10W',
         packaging=packaging,
         reel_power=reel_power
@@ -163,6 +169,7 @@ def gen_all_components():
             value_series_str='Jumper',
             tolerance='5.0%',
             size='0805',
+            rated_voltage='150V',
             power_rating='2A Rated, 5A Max',
             packaging=packaging,
             reel_power=reel_power
@@ -174,6 +181,7 @@ def gen_all_components():
         accepted_series_list=[values.E24, values.E96],
         tolerance='1.0%',
         size='0805',
+        rated_voltage='150V',
         power_rating='1/8W',
         packaging=packaging,
         reel_power=reel_power
@@ -186,6 +194,7 @@ def gen_all_components():
             value_series_str='Jumper',
             tolerance='5.0%',
             size='1206',
+            rated_voltage='200V',
             power_rating='2A Rated, 10A Max',
             packaging=packaging,
             reel_power=reel_power
@@ -197,6 +206,7 @@ def gen_all_components():
         accepted_series_list=[values.E24, values.E96],
         tolerance='1.0%',
         size='1206',
+        rated_voltage='200V',
         power_rating='1/4W',
         packaging=packaging,
         reel_power=reel_power

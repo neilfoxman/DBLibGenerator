@@ -64,6 +64,7 @@ class ChipComponent(ValuedComponent):
     def __init__(
         self,
         size,
+        rated_voltage,
         power_rating,
         construction,
         *args,
@@ -71,12 +72,14 @@ class ChipComponent(ValuedComponent):
 
         super().__init__(*args, **kwargs)
         self.size = size
+        self.rated_voltage = rated_voltage
         self.power_rating = power_rating
         self.construction = construction
     
     def to_dict(self):
         d = super().to_dict()
         d['Package / Case'] = self.size
+        d['Rated Voltage'] = self.rated_voltage
         d['Power Rating'] = self.power_rating
         d['Construction'] = self.construction
         return d

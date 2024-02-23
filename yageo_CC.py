@@ -37,12 +37,14 @@ def gen_capacitance_common_str(capacitance):
     pivot = (exponent % 3) + 1
     a = significand3_str[:pivot]
     b = significand3_str[pivot:].rstrip('0')
+    if b:
+        b = f".{b}"
     if exponent < -9:
-        return f"{a}p{b}"
+        return f"{a}{b}pF"
     elif exponent < -6:
-        return f"{a}n{b}"
+        return f"{a}{b}nF"
     elif exponent < -3:
-        return f"{a}u{b}"
+        return f"{a}{b}uF"
     
 def gen_pn(size, tolerance, packaging, rated_voltage, capacitance):
     tolerance_label = tolerance_labels[tolerance]
@@ -56,22 +58,23 @@ def gen_component_dict(
     value_series_str,
     tolerance,
     size,
-    power_rating,
+    rated_voltage,
     packaging,
-    reel_power
 ):
     """
     Generate component object that represents a specific resistor by this manufacturer
     """
-    capacitance_label = gen_capacitance_label(capacitance)
-    description = f"{capacitance_label} Capacitor ({capacitance_label}), {tolerance}, {size}, {power_rating}"
+    # capacitance_label = gen_capacitance_label(capacitance)
+    capacitance_common_str = gen_capacitance_common_str(capacitance)
+    description = f"{capacitance_common_str} Capacitor, {tolerance}, {size}, {rated_voltage}, X7R"
 
     return component.ChipComponent(
-        value=capacitance_label,
+        value=capacitance_common_str,
         series=value_series_str,
         tolerance=tolerance,
         size=size,
-        power_rating=power_rating,
+        rated_voltage=rated_voltage,
+        power_rating='',
         description=description,
         comment='=Value',
         manufacturer='Yageo',
@@ -79,14 +82,14 @@ def gen_component_dict(
             size=size,
             tolerance=tolerance,
             packaging=packaging,
-            reel_power=reel_power,
-            resistance=resistance,
+            rated_voltage=rated_voltage,
+            capacitance=capacitance,
         ),
         symbol_path=common.SYMBOL_PATH,
-        symbol_ref='Resistor',
+        symbol_ref='Capacitor',
         footprint_path=common.FOOTPRINT_PATH,
         footprint_ref=size,
-        construction='Thick Film',
+        construction='X7R',
     ).to_dict()
 
 def gen_component_dicts_in_range(
@@ -95,9 +98,8 @@ def gen_component_dicts_in_range(
     accepted_series_list,
     tolerance,
     size,
-    power_rating,
+    rated_voltage,
     packaging,
-    reel_power
 ):
     # Generate list of possible values from max and min
     values_map = values.ValueSeries.gen_values_map_in_range(
@@ -111,13 +113,12 @@ def gen_component_dicts_in_range(
     for value, series_list in values_map.items():
         component_list.append(
             gen_component_dict(
-                resistance=value,
-                value_series_str=gen_series_str(series_list),
+                capacitance=value,
+                value_series_str=values.gen_series_str(series_list),
                 tolerance=tolerance,
                 size=size,
-                power_rating=power_rating,
+                rated_voltage=rated_voltage,
                 packaging=packaging,
-                reel_power=reel_power
             )
         )
     return component_list
@@ -126,83 +127,243 @@ def gen_component_dicts_in_range(
             
 
 def gen_all_components():
-    # Some common parameters to use for generating all resistors
-    packaging = 'Paper taping reel'
-    reel_power = '7 inch dia. Reel & Standard power'
-
     # Generate all components
     component_list = []
 
     # 0603
-    component_list.append(
-        gen_component_dict(
-            resistance=0,
-            value_series_str='Jumper',
-            tolerance='5.0%',
-            size='0603',
-            power_rating='1A Rated, 2A Max',
+    size = '0603'
+    packaging = 'Paper/PE taping reel; Reel 7 inch'
+    for tolerance in tolerance_labels.keys():
+        component_list += gen_component_dicts_in_range(
+            min_value=100e-12,
+            max_value=4.7e-6,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='6.3V',
             packaging=packaging,
-            reel_power=reel_power
         )
-    )
-    component_list += gen_component_dicts_in_range(
-        min_value=1,
-        max_value=10e6,
-        accepted_series_list=[values.E24, values.E96],
-        tolerance='1.0%',
-        size='0603',
-        power_rating='1/10W',
-        packaging=packaging,
-        reel_power=reel_power
-    )
-
+        component_list += gen_component_dicts_in_range(
+            min_value=100e-12,
+            max_value=2.2e-6,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='10V',
+            packaging=packaging,
+        )
+        component_list += gen_component_dicts_in_range(
+            min_value=100e-12,
+            max_value=2.2e-6,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='16V',
+            packaging=packaging,
+        )
+        component_list += gen_component_dicts_in_range(
+            min_value=100e-12,
+            max_value=1e-6,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='25V',
+            packaging=packaging,
+        )
+        component_list += gen_component_dicts_in_range(
+            min_value=100e-12,
+            max_value=1e-6,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='50V',
+            packaging=packaging,
+        )
+        component_list += gen_component_dicts_in_range(
+            min_value=100e-12,
+            max_value=100e-9,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='100V',
+            packaging=packaging,
+        )
+        component_list += gen_component_dicts_in_range(
+            min_value=220e-12,
+            max_value=22e-9,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='200V',
+            packaging=packaging,
+        )
+        component_list += gen_component_dicts_in_range(
+            min_value=220e-12,
+            max_value=22e-9,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='250V',
+            packaging=packaging,
+        )
 
     # 0805
-    component_list.append(
-        gen_component_dict(
-            resistance=0,
-            value_series_str='Jumper',
-            tolerance='5.0%',
-            size='0805',
-            power_rating='2A Rated, 5A Max',
+    size = '0805'
+    packaging = 'Paper/PE taping reel; Reel 7 inch'
+    for tolerance in tolerance_labels.keys():
+        component_list += gen_component_dicts_in_range(
+            min_value=100e-12,
+            max_value=10e-6,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='6.3V',
             packaging=packaging,
-            reel_power=reel_power
         )
-    )
-    component_list += gen_component_dicts_in_range(
-        min_value=1,
-        max_value=10e6,
-        accepted_series_list=[values.E24, values.E96],
-        tolerance='1.0%',
-        size='0805',
-        power_rating='1/8W',
-        packaging=packaging,
-        reel_power=reel_power
-    )
+        component_list += gen_component_dicts_in_range(
+            min_value=100e-12,
+            max_value=10e-6,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='10V',
+            packaging=packaging,
+        )
+        component_list += gen_component_dicts_in_range(
+            min_value=100e-12,
+            max_value=10e-6,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='16V',
+            packaging=packaging,
+        )
+        component_list += gen_component_dicts_in_range(
+            min_value=100e-12,
+            max_value=4.7e-6,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='25V',
+            packaging=packaging,
+        )
+        component_list += gen_component_dicts_in_range(
+            min_value=100e-12,
+            max_value=2.2e-6,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='50V',
+            packaging=packaging,
+        )
+        component_list += gen_component_dicts_in_range(
+            min_value=100e-12,
+            max_value=1e-6,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='100V',
+            packaging=packaging,
+        )
+        component_list += gen_component_dicts_in_range(
+            min_value=100e-12,
+            max_value=47e-9,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='200V',
+            packaging=packaging,
+        )
+        component_list += gen_component_dicts_in_range(
+            min_value=100e-12,
+            max_value=47e-9,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='250V',
+            packaging=packaging,
+        )
 
     # 1206
-    component_list.append(
-        gen_component_dict(
-            resistance=0,
-            value_series_str='Jumper',
-            tolerance='5.0%',
-            size='1206',
-            power_rating='2A Rated, 10A Max',
+    size = '1206'
+    packaging = 'Paper/PE taping reel; Reel 7 inch'
+    for tolerance in tolerance_labels.keys():
+        component_list += gen_component_dicts_in_range(
+            min_value=220e-12,
+            max_value=22e-6,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='6.3V',
             packaging=packaging,
-            reel_power=reel_power
         )
-    )
-    component_list += gen_component_dicts_in_range(
-        min_value=1,
-        max_value=10e6,
-        accepted_series_list=[values.E24, values.E96],
-        tolerance='1.0%',
-        size='1206',
-        power_rating='1/4W',
-        packaging=packaging,
-        reel_power=reel_power
-    )
+        component_list += gen_component_dicts_in_range(
+            min_value=220e-12,
+            max_value=22e-6,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='10V',
+            packaging=packaging,
+        )
+        component_list += gen_component_dicts_in_range(
+            min_value=220e-12,
+            max_value=22e-6,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='16V',
+            packaging=packaging,
+        )
+        component_list += gen_component_dicts_in_range(
+            min_value=220e-12,
+            max_value=10e-6,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='25V',
+            packaging=packaging,
+        )
+        component_list += gen_component_dicts_in_range(
+            min_value=220e-12,
+            max_value=4.7e-6,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='50V',
+            packaging=packaging,
+        )
+        component_list += gen_component_dicts_in_range(
+            min_value=220e-12,
+            max_value=2.2e-6,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='100V',
+            packaging=packaging,
+        )
+        component_list += gen_component_dicts_in_range(
+            min_value=220e-12,
+            max_value=100e-9,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='200V',
+            packaging=packaging,
+        )
+        component_list += gen_component_dicts_in_range(
+            min_value=220e-12,
+            max_value=100e-9,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage='250V',
+            packaging=packaging,
+        )
 
     return component_list
 
-print(gen_capacitance_common_str(1e-6))
+# print(gen_capacitance_common_str(1.2e-7))
+import pandas as pd
+df = pd.DataFrame(gen_all_components())
+print(df)

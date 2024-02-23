@@ -21,6 +21,9 @@ if __name__ == "__main__":
     import yageo_RC_L
     comps += yageo_RC_L.gen_all_components()
 
+    import yageo_CC
+    comps += yageo_CC.gen_all_components()
+
     print("Restructuring as DataFrame...")
     import pandas as pd
     df = pd.DataFrame(comps).set_index('Manufacturer Part Number')
