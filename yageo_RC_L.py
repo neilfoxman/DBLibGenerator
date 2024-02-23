@@ -47,14 +47,6 @@ def gen_pn(size, tolerance, packaging, reel_power, resistance):
     resistance_label = gen_resistance_str(resistance)
     return f'RC{size}{tolerance_label}{packaging_label}-{reel_power_label}{resistance_label}L'
 
-def gen_series_str(series_list):
-    ret_str = ''
-    for series in series_list:
-        ret_str += series
-        if series is not series_list[-1]:
-            ret_str += ', '
-    return ret_str
-
 def gen_component_dict(
     resistance,
     value_series_str,
@@ -119,7 +111,7 @@ def gen_component_dicts_in_range(
         component_list.append(
             gen_component_dict(
                 resistance=value,
-                value_series_str=gen_series_str(series_list),
+                value_series_str=values.gen_series_str(series_list),
                 tolerance=tolerance,
                 size=size,
                 power_rating=power_rating,
@@ -211,3 +203,7 @@ def gen_all_components():
     )
 
     return component_list
+
+import pandas as pd
+df = pd.DataFrame(gen_all_components())
+print(df)

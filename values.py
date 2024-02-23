@@ -135,5 +135,13 @@ E192 = ValueSeries.from_str('E192',
     """
 )
 
+def gen_series_str(series_list):
+    ret_str = ''
+    for series in series_list:
+        ret_str += series
+        if series is not series_list[-1]:
+            ret_str += ', '
+    return ret_str
+
 # print(ValueSeries.gen_values_map_in_range(1, 50, accepted_series_list=[E6, E12, E48]))
 # print(ValueSeries.gen_values_map_in_range(1, 10, accepted_series_list=[E24, E96]))

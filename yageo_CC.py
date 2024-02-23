@@ -3,60 +3,56 @@ import values
 import component
 
 tolerance_labels = {
-    '0.1%' : 'B',
-    '0.5%' : 'D',
-    '1.0%' : 'F',
-    '5.0%' : 'J' # Also for jumpers
+    '5.0%' : 'J',
+    '10.0%' : 'K',
+    '20.0%' : 'M',
 }
 
 packaging_labels = {
-    'Paper taping reel': 'R',
-    'Embossed taping reel': 'K',
-    'ESD safe reel (0075/0100 only)': 'S'
+    'Paper/PE taping reel; Reel 7 inch': 'R',
+    'Blister taping reel; Reel 7 inch': 'K',
+    'Paper/PE taping reel; Reel 13 inch': 'P',
+    'Blister taping reel; Reel 13 inch': 'F',
 }
 
-reel_power_labels = {
-    '7 inch dia. Reel & Standard power': '07',
-    '10 inch dia. Reel': '10',
-    '13 inch dia. Reel': '13',
-    '7 inch dia. Reel & 2 x standard power': '7W',
-    '7 inch dia. Reel, ESD safe reel (0075/0100 only)': '7N',
-    '13 inch dia. Reel & 2 x standard power': '3W'
+rated_voltage_labels = {
+    '6.3V' : '5',
+    '10V' : '6',
+    '16V' : '7',
+    '25V' : '8',
+    '50V' : '9',
+    '100V' : '0',
+    '200V' : 'A',
+    '250V' : 'Y',
 }
 
-def gen_resistance_str(resistance):
-    significand, exponent = values.val_to_scinot(resistance)
+def gen_capacitance_label(capacitance):
+    significand, exponent = values.val_to_scinot(capacitance)
+    significand2_str = str(round(significand*10))
+    return f"{significand2_str}{exponent+11}"
+
+def gen_capacitance_common_str(capacitance):
+    significand, exponent = values.val_to_scinot(capacitance)
     significand3_str = str(round(significand*100))
+    pivot = (exponent % 3) + 1
+    a = significand3_str[:pivot]
+    b = significand3_str[pivot:].rstrip('0')
+    if exponent < -9:
+        return f"{a}p{b}"
+    elif exponent < -6:
+        return f"{a}n{b}"
+    elif exponent < -3:
+        return f"{a}u{b}"
     
-    # Determine resistance string
-    if exponent < -3:
-        return f"0U{'0'*(-1*(exponent+4))}{significand3_str.rstrip('0')}"
-    elif exponent < 0:
-        return f"0R{'0'*(-1*(exponent+1))}{significand3_str.rstrip('0')}"
-    elif exponent < 3:
-        return f"{significand3_str[:exponent+1]}R{significand3_str[exponent+1:].rstrip('0')}"
-    elif exponent < 6:
-        return f"{significand3_str[:exponent-2]}K{significand3_str[exponent-2:].rstrip('0')}"
-    elif exponent < 9:
-        return f"{significand3_str[:exponent-5]}M{significand3_str[exponent-5:].rstrip('0')}"
-    
-def gen_pn(size, tolerance, packaging, reel_power, resistance):
+def gen_pn(size, tolerance, packaging, rated_voltage, capacitance):
     tolerance_label = tolerance_labels[tolerance]
     packaging_label = packaging_labels[packaging]
-    reel_power_label = reel_power_labels[reel_power]
-    resistance_label = gen_resistance_str(resistance)
-    return f'RC{size}{tolerance_label}{packaging_label}-{reel_power_label}{resistance_label}L'
-
-def gen_series_str(series_list):
-    ret_str = ''
-    for series in series_list:
-        ret_str += series
-        if series is not series_list[-1]:
-            ret_str += ', '
-    return ret_str
+    rated_voltage_label = rated_voltage_labels[rated_voltage]
+    capacitance_label = gen_capacitance_label(capacitance)
+    return f'CC{size}{tolerance_label}{packaging_label}X7R{rated_voltage_label}BB{capacitance_label}'
 
 def gen_component_dict(
-    resistance,
+    capacitance,
     value_series_str,
     tolerance,
     size,
@@ -67,14 +63,11 @@ def gen_component_dict(
     """
     Generate component object that represents a specific resistor by this manufacturer
     """
-    resistance_str = gen_resistance_str(resistance)
-    if resistance == 0:
-        description = f"{resistance_str} Jumper, {size}, {power_rating}"
-    else:
-        description = f"{resistance_str} Resistor, {tolerance}, {size}, {power_rating}"
+    capacitance_label = gen_capacitance_label(capacitance)
+    description = f"{capacitance_label} Capacitor ({capacitance_label}), {tolerance}, {size}, {power_rating}"
 
     return component.ChipComponent(
-        value=resistance_str,
+        value=capacitance_label,
         series=value_series_str,
         tolerance=tolerance,
         size=size,
@@ -211,3 +204,5 @@ def gen_all_components():
     )
 
     return component_list
+
+print(gen_capacitance_common_str(1e-6))
