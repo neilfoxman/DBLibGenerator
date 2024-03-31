@@ -1,7 +1,7 @@
 [OutputDatabaseLinkFile]
 Version=1.1
 [DatabaseLinks]
-ConnectionString=Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\fwdev\DBLibGenerator\Passives.xlsx;Extended Properties="Excel 12.0 Xml;HDR=Yes;IMEX=1"
+ConnectionString=Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\EE\DBLibGenerator\Passives.xlsx;Extended Properties="Excel 12.0 Xml;HDR=Yes;IMEX=1"
 AddMode=3
 RemoveMode=1
 UpdateMode=2
@@ -12,7 +12,7 @@ QuoteTableNames=1
 UseTableSchemaName=0
 DefaultColumnType=VARCHAR(255)
 LibraryDatabaseType=Microsoft Excel 2007
-LibraryDatabasePath=C:\fwdev\DBLibGenerator\Passives.xlsx
+LibraryDatabasePath=C:\EE\DBLibGenerator\Passives.xlsx
 DatabasePathRelative=0
 TopPanelCollapsed=0
 LibrarySearchPath=
@@ -44,3 +44,7 @@ Options=FieldName=Sheet1$.Tolerance|TableNameOnly=Sheet1$|FieldNameOnly=Toleranc
 Options=FieldName=Sheet1$.Package / Case|TableNameOnly=Sheet1$|FieldNameOnly=Package / Case|FieldType=1|ParameterName=Package / Case|VisibleOnAdd=True|AddMode=0|RemoveMode=0|UpdateMode=0
 [FieldMap9]
 Options=FieldName=Sheet1$.Power Rating|TableNameOnly=Sheet1$|FieldNameOnly=Power Rating|FieldType=1|ParameterName=Power Rating|VisibleOnAdd=True|AddMode=0|RemoveMode=0|UpdateMode=0
+[FieldMap10]
+Options=FieldName=Sheet1$.Rated Voltage|TableNameOnly=Sheet1$|FieldNameOnly=Rated Voltage|FieldType=1|ParameterName=Rated Voltage|VisibleOnAdd=True|AddMode=0|RemoveMode=0|UpdateMode=0
+[FieldMap11]
+Options=FieldName=Sheet1$.Construction|TableNameOnly=Sheet1$|FieldNameOnly=Construction|FieldType=1|ParameterName=Construction|VisibleOnAdd=True|AddMode=0|RemoveMode=0|UpdateMode=0

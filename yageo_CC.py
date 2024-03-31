@@ -209,80 +209,115 @@ def gen_all_components():
 
     # 0805
     size = '0805'
-    packaging = 'Paper/PE taping reel; Reel 7 inch'
     for tolerance in tolerance_labels.keys():
+        for rated_voltage in ['6.3V', '10V', '16V']:
+            component_list += gen_component_dicts_in_range(
+                min_value=100e-12,
+                max_value=220e-9,
+                accepted_series_list=[values.E6],
+                tolerance=tolerance,
+                size=size,
+                rated_voltage=rated_voltage,
+                packaging='Paper/PE taping reel; Reel 7 inch',
+            )
+            component_list += gen_component_dicts_in_range(
+                min_value=330e-9,
+                max_value=10e-6,
+                accepted_series_list=[values.E6],
+                tolerance=tolerance,
+                size=size,
+                rated_voltage=rated_voltage,
+                packaging='Blister taping reel; Reel 7 inch',
+            )
+
+        rated_voltage = '25V'
         component_list += gen_component_dicts_in_range(
             min_value=100e-12,
-            max_value=10e-6,
+            max_value=220e-9,
             accepted_series_list=[values.E6],
             tolerance=tolerance,
             size=size,
-            rated_voltage='6.3V',
-            packaging=packaging,
+            rated_voltage=rated_voltage,
+            packaging='Paper/PE taping reel; Reel 7 inch',
         )
         component_list += gen_component_dicts_in_range(
-            min_value=100e-12,
-            max_value=10e-6,
-            accepted_series_list=[values.E6],
-            tolerance=tolerance,
-            size=size,
-            rated_voltage='10V',
-            packaging=packaging,
-        )
-        component_list += gen_component_dicts_in_range(
-            min_value=100e-12,
-            max_value=10e-6,
-            accepted_series_list=[values.E6],
-            tolerance=tolerance,
-            size=size,
-            rated_voltage='16V',
-            packaging=packaging,
-        )
-        component_list += gen_component_dicts_in_range(
-            min_value=100e-12,
+            min_value=330e-9,
             max_value=4.7e-6,
             accepted_series_list=[values.E6],
             tolerance=tolerance,
             size=size,
-            rated_voltage='25V',
-            packaging=packaging,
+            rated_voltage=rated_voltage,
+            packaging='Blister taping reel; Reel 7 inch',
         )
+
+        rated_voltage = '50V'
         component_list += gen_component_dicts_in_range(
             min_value=100e-12,
+            max_value=150e-9,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage=rated_voltage,
+            packaging='Paper/PE taping reel; Reel 7 inch',
+        )
+        component_list += gen_component_dicts_in_range(
+            min_value=220e-9,
             max_value=2.2e-6,
             accepted_series_list=[values.E6],
             tolerance=tolerance,
             size=size,
-            rated_voltage='50V',
-            packaging=packaging,
+            rated_voltage=rated_voltage,
+            packaging='Blister taping reel; Reel 7 inch',
         )
+
+        rated_voltage = '100V'
         component_list += gen_component_dicts_in_range(
             min_value=100e-12,
+            max_value=22e-9,
+            accepted_series_list=[values.E6],
+            tolerance=tolerance,
+            size=size,
+            rated_voltage=rated_voltage,
+            packaging='Paper/PE taping reel; Reel 7 inch',
+        )
+        component_list += gen_component_dicts_in_range(
+            min_value=33e-9,
             max_value=1e-6,
             accepted_series_list=[values.E6],
             tolerance=tolerance,
             size=size,
-            rated_voltage='100V',
-            packaging=packaging,
+            rated_voltage=rated_voltage,
+            packaging='Blister taping reel; Reel 7 inch',
         )
-        component_list += gen_component_dicts_in_range(
-            min_value=100e-12,
-            max_value=47e-9,
-            accepted_series_list=[values.E6],
-            tolerance=tolerance,
-            size=size,
-            rated_voltage='200V',
-            packaging=packaging,
-        )
-        component_list += gen_component_dicts_in_range(
-            min_value=100e-12,
-            max_value=47e-9,
-            accepted_series_list=[values.E6],
-            tolerance=tolerance,
-            size=size,
-            rated_voltage='250V',
-            packaging=packaging,
-        )
+
+        for rated_voltage in ['200V', '250V']:
+            component_list += gen_component_dicts_in_range(
+                min_value=100e-12,
+                max_value=4.7e-9,
+                accepted_series_list=[values.E6],
+                tolerance=tolerance,
+                size=size,
+                rated_voltage=rated_voltage,
+                packaging='Paper/PE taping reel; Reel 7 inch',
+            )
+            component_list += gen_component_dicts_in_range(
+                min_value=6.8e-9,
+                max_value=22e-9,
+                accepted_series_list=[values.E6],
+                tolerance=tolerance,
+                size=size,
+                rated_voltage=rated_voltage,
+                packaging='Blister taping reel; Reel 7 inch',
+            )
+            component_list += gen_component_dicts_in_range(
+                min_value=33e-9,
+                max_value=47e-9,
+                accepted_series_list=[values.E6],
+                tolerance=tolerance,
+                size=size,
+                rated_voltage=rated_voltage,
+                packaging='Paper/PE taping reel; Reel 7 inch',
+            )
 
     # 1206
     size = '1206'
